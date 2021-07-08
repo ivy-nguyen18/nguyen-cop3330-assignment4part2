@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class ListManagerControllerTest {
+class ToDoListAppControllerTest {
 
     @Test
     void able_to_add_a_new_todo_list() {

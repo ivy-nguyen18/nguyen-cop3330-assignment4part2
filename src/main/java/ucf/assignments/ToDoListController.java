@@ -4,50 +4,49 @@
  */
 package ucf.assignments;
 
-import com.google.gson.Gson;
+import com.sun.javafx.scene.control.DatePickerContent;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 
-import java.net.URL;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.ResourceBundle;
 
 public class ToDoListController {
-
-    private ToDoList selectedList;
 
     //configure the table
     @FXML private TableView<Item> itemTableView;
     @FXML private TableColumn<Item, CheckBox> isCompletedColumn;
-    @FXML private TableColumn<Item, String> itemNameColumn;
     @FXML private TableColumn<Item, String> descriptionColumn;
     @FXML private TableColumn<Item, LocalDate> dueDateColumn;
 
     //Instance variables to create new Item objects
     @FXML private CheckBox isComplete;
-    @FXML private TextField itemNameTextField;
-    @FXML private TextField descriptionTextField;
+    @FXML private TextArea descriptionTextArea;
     @FXML private DatePicker dueDatePicker;
 
-    @FXML private ObservableList<Item> itemObservableList;
+    @FXML private ObservableList<Item> itemObservableList = FXCollections.observableArrayList();
 
 
     @FXML
     public void addItemButtonClicked(ActionEvent actionEvent) {
-        //call addItem
+        addItem(descriptionTextArea.getText(), dueDatePicker.getValue(), itemObservableList);
     }
 
     @FXML
     public void deleteItemsButtonClicked(ActionEvent actionEvent) {
-        //create ObservableList of type Item for the selected rows
-        //get the rows that were selected
+        //create ObservableList of type Item for all Items
+        ObservableList<Item> allItems = itemTableView.getItems();
+
+        //create ObservableList of type Item for items to remove
+        Item selectedItem = itemTableView.getSelectionModel().getSelectedItem();
+
         //call deleteItems
+        deleteItems(selectedItem, allItems);
     }
 
     @FXML
@@ -95,14 +94,15 @@ public class ToDoListController {
 
     public void initialize(){
         //set up table
-        //load observableListItems to make list viewable
-        //set ToDoList arrayList of items to observable list
-    }
+        initTable();
 
-    @FXML
-    public void initData(ToDoList list){
-        //make passed in list equal to selectedList
-        //read in list file to load previous items
+        //load from memory
+
+        //load observableListItems to make list viewable
+        itemTableView.setItems(itemObservableList);
+
+        //allow for multiple selection
+        itemTableView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
     }
 
     public FilteredList<Item> viewUncompletedOnly(FilteredList<Item> unCompleteList){
@@ -126,9 +126,13 @@ public class ToDoListController {
     }
 
 
-    public ToDoList addItem(CheckBox isComplete, String item, String description, LocalDate dueDate, ToDoList selectedList){
+    public ObservableList<Item> addItem(String description, LocalDate dueDate, ObservableList<Item> selectedList){
         //Create and initialize new item object
+        Item newItem = new Item(description, dueDate);
+
         //add the new item to the list of items in the table
+        itemTableView.getItems().add(newItem);
+
         return selectedList;
     }
 
@@ -144,14 +148,11 @@ public class ToDoListController {
         return observableList;
     }
 
-    public ObservableList<Item> deleteItems(ObservableList<Item> deleteItemList, ObservableList<Item> itemObservableList){
-        //create Observable list of type Item to contain the entire Item list of table
+    public ObservableList<Item> deleteItems(Item selectedItem, ObservableList<Item> allItemsList){
+        //remove item from list
+        allItemsList.remove(selectedItem);
 
-        //for loop over the selected rows
-            //remove the Item objects from the table
-
-        //update selectedList
-        return itemObservableList;
+        return allItemsList;
     }
 
     private ObservableList<Item> ObservableListItems(){
@@ -163,42 +164,34 @@ public class ToDoListController {
     }
 
     private void initTable() {
-        //call initColumns
-    }
-
-    private void initColumns() {
         //initialize columns in table to instance variables using setCellValueFactory
+        isCompletedColumn.setCellValueFactory(new PropertyValueFactory<Item, CheckBox>("isComplete"));
+        descriptionColumn.setCellValueFactory(new PropertyValueFactory<Item, String>("description"));
+        dueDateColumn.setCellValueFactory(new PropertyValueFactory<Item, LocalDate>("dueDate"));
+
         //make columns editable
+        itemTableView.setEditable(true);
     }
 
     private void editDueDate(){
         //make the DueDate column editable
+        dueDateColumn.setEditable(true);
         //go into the table, get the new changes
-        //call setChangedDueDate
-    }
-
-    public void setChangedDueDate(LocalDate newDueDate){
-        //set newDueDate equal to dueDate setter
+        dueDateColumn.setOnEditCommit(event -> event.getRowValue().setDueDate(event.getNewValue()));
     }
 
     private void editDescription(){
         //make the Description column editable
+        descriptionColumn.setEditable(true);
         //go into the table, get the new changes
-        // call setChangedDescription
-    }
-
-    public void setChangedDescription(String newDescription){
-        // set newDescription equal to description setter
+        descriptionColumn.setOnEditCommit(event -> event.getRowValue().setDescription(event.getNewValue()));
     }
 
     private void editStatus(){
         //make the status column editable
+        isCompletedColumn.setEditable(true);
         //go into the table, get the new changes
-        //call setChangedStatus
-    }
-
-    public void setChangedStatus(CheckBox newStatus){
-        // new status equal to status setter
+        isCompletedColumn.setOnEditCommit(event -> event.getRowValue().setIsComplete(event.getNewValue()));
     }
 
     private void dateConverter(){
@@ -224,4 +217,6 @@ public class ToDoListController {
         //copy list to current ObservableList
     }
 
+    public void clearListClicked(ActionEvent actionEvent) {
+    }
 }

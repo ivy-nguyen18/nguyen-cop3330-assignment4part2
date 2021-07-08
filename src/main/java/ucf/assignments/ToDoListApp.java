@@ -12,7 +12,7 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
-public class ListManager extends Application {
+public class ToDoListApp extends Application {
 
     public static void main(String[] args) {
         launch(args);
@@ -22,7 +22,7 @@ public class ListManager extends Application {
     public void start(Stage primaryStage) {
         try {
 
-            Parent root = FXMLLoader.load(getClass().getResource("ListManager.fxml"));
+            Parent root = FXMLLoader.load(getClass().getResource("ToDoList.fxml"));
 
             Scene scene = new Scene(root);
 

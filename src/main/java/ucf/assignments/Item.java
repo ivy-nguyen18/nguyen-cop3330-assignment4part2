@@ -12,35 +12,21 @@ import java.time.LocalDate;
 public class Item {
 
     private CheckBox isComplete;
-    private SimpleStringProperty item;
     private SimpleStringProperty description;
     private LocalDate dueDate;
 
-    public Item (CheckBox isComplete, String item, String description, LocalDate dueDate) {
-        this.isComplete = isComplete;
-        this.item = new SimpleStringProperty(item);
+    public Item (String description, LocalDate dueDate) {
+        this.isComplete = new CheckBox();
         this.description = new SimpleStringProperty(description);
         this.dueDate = dueDate;
     }
 
-    public CheckBox isComplete() {
+    public CheckBox getIsComplete() {
         return isComplete;
     }
 
-    public void setComplete(CheckBox isComplete) {
-        //set isComplete;
-    }
-
-    public String getItem() {
-        return item.get();
-    }
-
-    public SimpleStringProperty itemProperty() {
-        return item;
-    }
-
-    public void setItem(String item) {
-        //set Item;
+    public void setIsComplete(CheckBox isComplete) {
+        this.isComplete = isComplete;
     }
 
     public String getDescription() {
@@ -52,7 +38,7 @@ public class Item {
     }
 
     public void setDescription(String description) {
-        //set description;
+        this.description.set(description);
     }
 
     public LocalDate getDueDate() {
@@ -60,7 +46,10 @@ public class Item {
     }
 
     public void setDueDate(LocalDate dueDate) {
-        //set due date;
+        this.dueDate = dueDate;
     }
+
+
+
 
 }
