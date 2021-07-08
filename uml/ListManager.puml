@@ -1,0 +1,125 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+class ListManager{
+    + main()
+    + start()
+}
+
+class ListManagerController{
+    - newListTextField: TextField
+    - toDoListTableView: Tableview<ToDoList>
+    - lists: ObservableList<ToDoList>
+    - toDoArrayList: ArrayList<ToDoList>
+
+    + initialize()
+    + openListScene(MouseEvent)
+    + editCell(TableColumn.CellEditEvent)
+    + createNewListButtonClicked(ActionEvent)
+    + saveAllListsButtonClicked(ActionEvent)
+    + deleteListsButtonClicked(ActionEvent)
+    + getLists():ObservableList<ToDoList>
+    + changeListName(String)
+    + saveAlLists(ObservableList<ToDoList>, File): File
+    + addNewListToLists(String): ObservableList<ToDoList>
+    + deleteLists(ObservableList<ToDoList>, ObservableList<ToDoList>): ObservableList<ToDoList>
+    - deleteDirectoryOfLists(String folderName)
+    - observableListItems()
+    - initTable()
+    - initColumns()
+    - editColumns()
+    - loadFromPrevious(File): ObservableList<ToDoList>
+    - makeNewDirectory(ToDoList)
+    - makeSerializationFile(ToDoList)
+    - makeRootDirectory()
+    - createNewList()
+
+}
+
+class ToDoList{
+    - itemsArrayList: ArrayList<Item>
+    - listName: SimpleStringProperty
+    - pathToList: Path
+    - itemsFile: File
+
+    + getItemsArrayList(): ArrayList<Item>
+    + setItemsArrayList(ArrayList<Item>)
+    + getPathToList(): Path
+    + getItemsFile(): File
+    + setItemsFile(File)
+    + getListName(): String
+    + listNameProperty(): SimpleStringProperty
+    + setListName(String)
+}
+
+class ToDoListController{
+    - itemTableView: TableView<Item>
+    - isCompletedColumn: TableColumn<Item, CheckBox>
+    - itemNameColumn: TableColumn<Item, String>
+    - descriptionColumn: TableColumn<Item, String>
+    - dueDateColumn: TableColumn<Item, LocalDate>
+    - isComplete: CheckBox
+    - itemNameTextField: TextField
+    - descriptionTextField: TextField
+    - dueDatePicker: DatePicker
+    - itemObservableList: ObservableList<Item>
+    - selectedList: ToDoList
+
+    + addItemButtonClicked(ActionEvent)
+    + deleteItemsButtonClicked(ActionEvent)
+    + saveChangesButtonClicked(ActionEvent)
+    + backToListManagerButtonClicked(ActionEvent)
+    + viewCompletedOnlyClicked(ActionEvent)
+    + viewUncompletedOnlyButtonClicked(ActionEvent)
+    + viewAllClicked(ActionEvent)
+    + sortByDueDate()
+    + initialize()
+    + initData(ToDoList)
+    + viewUncompletedOnly(FilteredList<Item>): FilteredList<Item>
+    + viewCompletedOnly(FilteredList<Item>): FilteredList<Item>
+    + viewAll(FilteredList<Item>): FilteredList<Item>
+    + addItem(CheckBox isComplete, String item, String description, LocalDate dueDate, ToDoList selectedList): ToDoList
+    + saveChanges()
+    + deleteItems(ObservableList<Item>, ObservableList<Item>): ObservableList<Item>
+    + setChangedDueDate(LocalDate)
+    + setChangedDescription(String)
+    + setChangedStatus(CheckBox)
+    - observableListToArrayList(): ArrayList<Item>
+    - ObservableListItems()
+    - initTable()
+    - initColumns()
+    - editColumns()
+    - editDueDate()
+    - editDescription()
+    - editStatus()
+    - dateConverter()
+    - loadFromPrevious()
+
+}
+
+class Item{
+    - isComplete: CheckBox
+    - item: SimpleStringProperty
+    - description: SimpleStringProperty
+    - dueDate: LocalDate
+
+    + Item(CheckBox, String, String, LocalDate)
+    + isComplete(): CheckBox
+    + setComplete(CheckBox)
+    + getItem(): String
+    + itemProperty(): SimpleStringProperty
+    + setItem(String)
+    + getDescription(): String
+    + descriptionProperty(): SimpleStringProperty
+    + setDescription(String)
+    + getDueDate(): LocalDate
+    + setDueDate(LocalDate)
+}
+
+javafx.Application <|-- ListManager
+ListManager -- ListManagerController
+ListManagerController -- ToDoListController
+ToDoList -- ToDoListController
+ToDoList -- Item
+
+@enduml
