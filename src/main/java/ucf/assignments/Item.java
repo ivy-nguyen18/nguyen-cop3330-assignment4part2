@@ -5,6 +5,7 @@
 package ucf.assignments;
 
 import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.scene.control.CheckBox;
 
 import java.time.LocalDate;
@@ -29,6 +30,7 @@ public class Item {
         this.isComplete = isComplete;
     }
 
+
     public String getDescription() {
         return description.get();
     }
@@ -39,6 +41,7 @@ public class Item {
 
     public void setDescription(String description) {
         this.description.set(description);
+        //this.description = new SimpleStringProperty(description);
     }
 
     public LocalDate getDueDate() {
@@ -48,8 +51,5 @@ public class Item {
     public void setDueDate(LocalDate dueDate) {
         this.dueDate = dueDate;
     }
-
-
-
 
 }

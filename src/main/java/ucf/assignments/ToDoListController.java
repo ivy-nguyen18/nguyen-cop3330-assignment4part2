@@ -4,14 +4,15 @@
  */
 package ucf.assignments;
 
-import com.sun.javafx.scene.control.DatePickerContent;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.cell.TextFieldTableCell;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -19,22 +20,23 @@ import java.util.ArrayList;
 public class ToDoListController {
 
     //configure the table
-    @FXML private TableView<Item> itemTableView;
+    @FXML private TableView<Item> itemTableView = new TableView<>();
     @FXML private TableColumn<Item, CheckBox> isCompletedColumn;
     @FXML private TableColumn<Item, String> descriptionColumn;
     @FXML private TableColumn<Item, LocalDate> dueDateColumn;
 
     //Instance variables to create new Item objects
     @FXML private CheckBox isComplete;
-    @FXML private TextArea descriptionTextArea;
+    @FXML private TextField descriptionTextField;
     @FXML private DatePicker dueDatePicker;
 
+    @FXML ComboBox<String> filterComboBox;
     @FXML private ObservableList<Item> itemObservableList = FXCollections.observableArrayList();
 
 
     @FXML
     public void addItemButtonClicked(ActionEvent actionEvent) {
-        addItem(descriptionTextArea.getText(), dueDatePicker.getValue(), itemObservableList);
+        addItem(descriptionTextField.getText(), dueDatePicker.getValue(), itemObservableList);
     }
 
     @FXML
@@ -54,42 +56,44 @@ public class ToDoListController {
         //call saveChanges
     }
 
+
     @FXML
-    public void backToListManagerButtonClicked(ActionEvent actionEvent) {
-        //if the event is clicked twice
-            //create parent node and load the ListManager.fxml from Resources
-            //Initialize Scene and set Scene to show parent
-            //Set stage
-            //Set scene onto window
-            //show the window
+    public void viewFilterComboBox(){
+        String choice = filterComboBox.getValue().toString();
+        FilteredList<Item> displayList;
+        switch (choice) {
+            case "View Completed Only" -> {
+                displayList = viewCompletedOnly(itemObservableList);
+                displayItems(displayList);
+            }
+            case "View Uncompleted Only" -> {
+                displayList = viewUncompletedOnly(itemObservableList);
+                displayItems(displayList);
+            }
+            default -> {
+                displayList = viewAll(itemObservableList);
+                displayItems(displayList);
+            }
+        }
     }
 
     @FXML
-    public void viewCompletedOnlyClicked(ActionEvent actionEvent) {
-        //call viewCompletedOnly
-        //call displayItems
-    }
-
-    @FXML
-    public void viewUncompletedOnlyButtonClicked(ActionEvent actionEvent) {
-        //call viewUncompletedOnly
-        //call displayItems
-    }
-
-    @FXML
-    public void viewAllClicked(ActionEvent actionEvent) {
-        //call viewAll
-        //call displayItems
-    }
-
-    @FXML
-    private void editColumns() {
+    public void editColumns() {
         //set the table to be editable (true)
         //allow for due date to be editable
         //allow for description to be editable
         //allow for status to be editable
 
         //allow for multiple selection
+    }
+
+    @FXML
+    public void clearListClicked(ActionEvent actionEvent) {
+        clearList(itemObservableList);
+    }
+
+    private void clearList(ObservableList<Item> list) {
+        list.clear();
     }
 
     public void initialize(){
@@ -101,28 +105,40 @@ public class ToDoListController {
         //load observableListItems to make list viewable
         itemTableView.setItems(itemObservableList);
 
+        //set up filter
+        filterComboBox.getItems().add("View All");
+        filterComboBox.getItems().addAll("View Completed Only", "View Uncompleted Only");
+
         //allow for multiple selection
         itemTableView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+
+        //make columns editable
+        itemTableView.setEditable(true);
+        descriptionColumn.setCellFactory(TextFieldTableCell.forTableColumn());
+        isCompletedColumn.setCellFactory(tc -> new CheckBoxTableCell<>());
     }
 
-    public FilteredList<Item> viewUncompletedOnly(FilteredList<Item> unCompleteList){
+    public FilteredList<Item> viewUncompletedOnly(ObservableList<Item> allItems){
         //for unCompleteList use lambda expression to set the predicate that for each Item, call isCompleted and compare to false
+        FilteredList<Item> unCompleteList = new FilteredList<>(allItems, i -> !i.getIsComplete().isSelected());
         return unCompleteList;
     }
 
-    public FilteredList<Item> viewCompletedOnly(FilteredList<Item> completeList){
+    public FilteredList<Item> viewCompletedOnly(ObservableList<Item> allItems){
         //for completedList use lambda expression to set the predicate that for each Item, call isCompleted and compare to true
+        FilteredList<Item> completeList = new FilteredList<>(allItems, i -> i.getIsComplete().isSelected());
         return completeList;
     }
 
-    public FilteredList<Item> viewAll(FilteredList<Item> entireList){
+    public FilteredList<Item> viewAll(ObservableList<Item> allItems){
         //for entireList use lambda expression to set the predicate that for each Item, call isCompleted and compare to true or false
-        //set ToDoList arrayList of items to this entireList
+        FilteredList<Item> entireList = new FilteredList<>(allItems, i -> i.getIsComplete().isSelected() || !i.getIsComplete().isSelected());
         return entireList;
     }
 
     private void displayItems(FilteredList<Item> displayList){
         //set itemTableView to displayList
+        itemTableView.setItems(displayList);
     }
 
 
@@ -168,30 +184,30 @@ public class ToDoListController {
         isCompletedColumn.setCellValueFactory(new PropertyValueFactory<Item, CheckBox>("isComplete"));
         descriptionColumn.setCellValueFactory(new PropertyValueFactory<Item, String>("description"));
         dueDateColumn.setCellValueFactory(new PropertyValueFactory<Item, LocalDate>("dueDate"));
-
-        //make columns editable
-        itemTableView.setEditable(true);
     }
 
     private void editDueDate(){
         //make the DueDate column editable
-        dueDateColumn.setEditable(true);
+        //dueDateColumn.setEditable(true);
         //go into the table, get the new changes
-        dueDateColumn.setOnEditCommit(event -> event.getRowValue().setDueDate(event.getNewValue()));
+        //dueDateColumn.setCellFactory(TextFieldTableCell.forTableColumn(new LocalDateStringConverter()));
+        //Item itemSelected = itemTableView.getSelectionModel().getSelectedItem();
     }
 
-    private void editDescription(){
-        //make the Description column editable
-        descriptionColumn.setEditable(true);
+    @FXML
+    public void editDescription(TableColumn.CellEditEvent edittedCell){
         //go into the table, get the new changes
-        descriptionColumn.setOnEditCommit(event -> event.getRowValue().setDescription(event.getNewValue()));
+        Item itemSelected = itemTableView.getSelectionModel().getSelectedItem();
+        //set the changes to item's description
+        itemSelected.setDescription(edittedCell.getNewValue().toString());
     }
 
-    private void editStatus(){
+    @FXML
+    public void editStatus(TableColumn.CellEditEvent edittedCell){
         //make the status column editable
-        isCompletedColumn.setEditable(true);
+        Item itemSelected = itemTableView.getSelectionModel().getSelectedItem();
         //go into the table, get the new changes
-        isCompletedColumn.setOnEditCommit(event -> event.getRowValue().setIsComplete(event.getNewValue()));
+        itemSelected.getIsComplete().isSelected();
     }
 
     private void dateConverter(){
@@ -217,6 +233,4 @@ public class ToDoListController {
         //copy list to current ObservableList
     }
 
-    public void clearListClicked(ActionEvent actionEvent) {
-    }
 }

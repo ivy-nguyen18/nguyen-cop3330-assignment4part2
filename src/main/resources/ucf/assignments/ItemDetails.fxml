@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+
+<AnchorPane prefHeight="266.0" prefWidth="377.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ucf.assignments.ItemDetails">
+   <children>
+      <Text layoutX="134.0" layoutY="46.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Edit Item Details">
+         <font>
+            <Font name="System Bold" size="14.0" />
+         </font>
+      </Text>
+      <TextField layoutX="101.0" layoutY="73.0" prefHeight="25.0" prefWidth="174.0" promptText="Description" />
+      <DatePicker layoutX="103.0" layoutY="121.0" promptText="Due Date" />
+      <CheckBox layoutX="148.0" layoutY="175.0" mnemonicParsing="false" text="Completed" />
+      <Button layoutX="143.0" layoutY="219.0" mnemonicParsing="false" text="Save Changes" />
+   </children>
+</AnchorPane>
