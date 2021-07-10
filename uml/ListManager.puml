@@ -1,69 +1,24 @@
 @startuml
 'https://plantuml.com/class-diagram
 
-class ListManager{
+class ToDoListApp{
     + main()
     + start()
-}
-
-class ListManagerController{
-    - newListTextField: TextField
-    - toDoListTableView: Tableview<ToDoList>
-    - lists: ObservableList<ToDoList>
-    - toDoArrayList: ArrayList<ToDoList>
-
-    + initialize()
-    + openListScene(MouseEvent)
-    + editCell(TableColumn.CellEditEvent)
-    + createNewListButtonClicked(ActionEvent)
-    + saveAllListsButtonClicked(ActionEvent)
-    + deleteListsButtonClicked(ActionEvent)
-    + getLists():ObservableList<ToDoList>
-    + changeListName(String)
-    + saveAlLists(ObservableList<ToDoList>, File): File
-    + addNewListToLists(String): ObservableList<ToDoList>
-    + deleteLists(ObservableList<ToDoList>, ObservableList<ToDoList>): ObservableList<ToDoList>
-    - deleteDirectoryOfLists(String folderName)
-    - observableListItems()
-    - initTable()
-    - initColumns()
-    - editColumns()
-    - loadFromPrevious(File): ObservableList<ToDoList>
-    - makeNewDirectory(ToDoList)
-    - makeSerializationFile(ToDoList)
-    - makeRootDirectory()
-    - createNewList()
-
-}
-
-class ToDoList{
-    - itemsArrayList: ArrayList<Item>
-    - listName: SimpleStringProperty
-    - pathToList: Path
-    - itemsFile: File
-
-    + getItemsArrayList(): ArrayList<Item>
-    + setItemsArrayList(ArrayList<Item>)
-    + getPathToList(): Path
-    + getItemsFile(): File
-    + setItemsFile(File)
-    + getListName(): String
-    + listNameProperty(): SimpleStringProperty
-    + setListName(String)
 }
 
 class ToDoListController{
     - itemTableView: TableView<Item>
     - isCompletedColumn: TableColumn<Item, CheckBox>
-    - itemNameColumn: TableColumn<Item, String>
     - descriptionColumn: TableColumn<Item, String>
     - dueDateColumn: TableColumn<Item, LocalDate>
-    - isComplete: CheckBox
-    - itemNameTextField: TextField
+
     - descriptionTextField: TextField
     - dueDatePicker: DatePicker
     - itemObservableList: ObservableList<Item>
-    - selectedList: ToDoList
+    - filterComboBox: ComboBox <String>
+
+    - primaryStage: Stage
+    - selectedFile: File
 
     + addItemButtonClicked(ActionEvent)
     + deleteItemsButtonClicked(ActionEvent)

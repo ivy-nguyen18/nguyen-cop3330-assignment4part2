@@ -5,33 +5,29 @@
 package ucf.assignments;
 
 import com.google.gson.Gson;
-import com.sun.javafx.collections.ObservableListWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -60,6 +56,7 @@ public class ToDoListController {
 
     @FXML
     public void addItemButtonClicked(ActionEvent actionEvent) {
+        //all addItem with user inputted info
         addItem(descriptionTextField.getText(), dueDatePicker.getValue(), itemObservableList);
     }
 
@@ -78,39 +75,105 @@ public class ToDoListController {
 
     @FXML
     public void viewFilterComboBox(){
+        //get the choice from the Combo box
         String choice = filterComboBox.getValue();
+
+        //initialize filtered list
         FilteredList<Item> displayList;
+
+        //switch case to for choice
         switch (choice) {
             case "View Completed Only" -> {
+                //call viewCompletedOnly, put resulting list in displayList
                 displayList = viewCompletedOnly(itemObservableList);
+                //call displayItems to display the items in List
                 displayItems(displayList);
             }
             case "View Uncompleted Only" -> {
+                //call viewUncompletedOnly, put resulting list in displayList
                 displayList = viewUncompletedOnly(itemObservableList);
+                //call displayItems to display the items in List
                 displayItems(displayList);
             }
             default -> {
+                //set itemTableView to itemObservableList to display all items
                 itemTableView.setItems(itemObservableList);
             }
         }
     }
 
     @FXML
-    public void editColumns() {
-        //set the table to be editable (true)
-        //allow for due date to be editable
-        //allow for description to be editable
-        //allow for status to be editable
-
-        //allow for multiple selection
+    public void editDescription(TableColumn.CellEditEvent edittedCell){
+        //go into the table, get the new changes
+        Item itemSelected = itemTableView.getSelectionModel().getSelectedItem();
+        //set the changes to item's description
+        itemSelected.setDescription(edittedCell.getNewValue().toString());
     }
 
     @FXML
     public void clearListClicked(ActionEvent actionEvent) {
+        //call clearList
         clearList(itemObservableList);
     }
 
+    @FXML
+    public void refreshButtonClicked(ActionEvent actionEvent) {
+        //use refresh button for tableview
+        itemTableView.refresh();
+    }
+
+    @FXML
+    public void saveOptionClicked(){
+        //call saveFile
+        saveFile(itemTableView.getItems(), selectedFile);
+    }
+
+    @FXML
+    public void saveAsOptionClicked(){
+        //initialize FileChooser
+        FileChooser fileChooser = new FileChooser();
+
+        //set stage for fileChooser
+        Stage fileStage = new Stage();
+        fileStage.setTitle("Save As");
+
+        //set default directory to be the user's home directory
+        fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
+
+        //make sure file is saved as .ser to be serializable
+        FileChooser.ExtensionFilter exFilter = new FileChooser.ExtensionFilter("Json files (*.json)", "*.json");
+        fileChooser.getExtensionFilters().add(exFilter);
+
+        //show the file stage
+        File selectedFile = fileChooser.showSaveDialog(fileStage);
+
+        //instantiate selected file
+        this.selectedFile = selectedFile;
+
+        //call saveFile to save items in List
+        saveFile( itemTableView.getItems() , selectedFile);
+
+    }
+
+    @FXML
+    public void openOptionClicked(ActionEvent actionEvent) {
+        //call openFile
+        openFile();
+    }
+
+    public void editColumns() {
+        //set the table to be editable (true)
+        itemTableView.setEditable(true);
+
+        //allow for description to be editable
+        descriptionColumn.setCellFactory(TextFieldTableCell.forTableColumn());
+
+        //allow for due date to be editable
+        editDueDateView();
+    }
+
     private void clearList(ObservableList<Item> list) {
+        //use list's clear function
         list.clear();
     }
 
@@ -125,13 +188,12 @@ public class ToDoListController {
         filterComboBox.getItems().add("View All");
         filterComboBox.getItems().addAll("View Completed Only", "View Uncompleted Only");
 
-        //allow for multiple selection
+        //set selection to single
         itemTableView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
 
-        //make columns editable
-        itemTableView.setEditable(true);
-        descriptionColumn.setCellFactory(TextFieldTableCell.forTableColumn());
-        editDueDateView();
+        //make table editable
+        editColumns();
+
     }
 
     public FilteredList<Item> viewUncompletedOnly(ObservableList<Item> allItems){
@@ -142,11 +204,6 @@ public class ToDoListController {
     public FilteredList<Item> viewCompletedOnly(ObservableList<Item> allItems){
         //for completedList use lambda expression to set the predicate that for each Item, call isCompleted and compare to true
         return new FilteredList<>(allItems, i -> i.getIsComplete().isSelected());
-    }
-
-    public FilteredList<Item> viewAll(ObservableList<Item> itemObservableList){
-        //for entireList use lambda expression to set the predicate that for each Item, call isCompleted and compare to true or false
-        return new FilteredList<>(itemObservableList, b -> true);
     }
 
     private void displayItems(FilteredList<Item> displayList){
@@ -162,6 +219,7 @@ public class ToDoListController {
         //add the new item to the list of items in the table
         itemTableView.getItems().add(newItem);
 
+        //return selected list
         return selectedList;
     }
 
@@ -175,35 +233,50 @@ public class ToDoListController {
         //remove item from list
         allItemsList.remove(selectedItem);
 
+        //return allItems list
         return allItemsList;
     }
 
     public void setPrimaryStage(Stage primaryStage){
+        //set the primary stage to be ToDoList
         this.primaryStage = primaryStage;
     }
 
-    @FXML
+
     public void editDueDateView(){
+        //set the mouse click event to be take in double clicks
         itemTableView.setOnMouseClicked((MouseEvent event) -> {
+
+            //if mouse is left - double clicked
             if (event.getButton().equals(MouseButton.PRIMARY) && event.getClickCount() == 2){
                 try {
+                    //load the DueDate.fxml
                     FXMLLoader loader = new FXMLLoader();
                     loader.setLocation(getClass().getResource("DueDateView.fxml"));
                     AnchorPane dueDateViewParent = loader.load();
 
+                    //set the stage
                     Stage stage = new Stage();
+
+                    //set due date stage to be within primary window
                     stage.initModality(Modality.WINDOW_MODAL);
                     stage.initOwner(primaryStage);
                     stage.setTitle("Edit Due Date");
+
+                    //set the scene
                     Scene dueDateViewScene = new Scene(dueDateViewParent);
                     stage.setScene(dueDateViewScene);
 
+                    //get the DueDateViewController and load it to stage
                     DueDateViewController controller = loader.getController();
                     controller.setDueDateStage(stage);
+                    //get the selected item
                     Item selectedItem = itemTableView.getSelectionModel().getSelectedItem();
+                    //initialize selected item into DueDateController
                     controller.initData(selectedItem);
 
-                   stage.showAndWait();
+                    //keep window open until closed
+                    stage.showAndWait();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -220,134 +293,112 @@ public class ToDoListController {
         dueDateColumn.setCellValueFactory(new PropertyValueFactory<Item, LocalDate>("dueDate"));
     }
 
-
-    @FXML
-    public void editDescription(TableColumn.CellEditEvent edittedCell){
-        //go into the table, get the new changes
-        Item itemSelected = itemTableView.getSelectionModel().getSelectedItem();
-        //set the changes to item's description
-        itemSelected.setDescription(edittedCell.getNewValue().toString());
-    }
-
-    @FXML
-    public void editStatus(TableColumn.CellEditEvent edittedCell){
-        //make the status column editable
-        Item itemSelected = itemTableView.getSelectionModel().getSelectedItem();
-        //go into the table, get the new changes
-        itemSelected.getIsComplete().isSelected();
-    }
-
-
     private void loadFromPrevious(File file){
 
         try{
+            //new Gson object
             Gson gson = new Gson();
 
+            //read file into a list of SerItem
             Reader reader = Files.newBufferedReader(Paths.get(String.valueOf(file)));
             List<SerItem> serItems = Arrays.asList(gson.fromJson(reader, SerItem[].class));
 
+            //call makeListDeserializable to turn serItems to Item list
             makeListDeserializable(serItems);
 
+            //close reader
             reader.close();
-
         } catch (IOException e) {
             e.printStackTrace();
         }
 
     }
 
-    @FXML
-    public void refreshButtonClicked(ActionEvent actionEvent) {
-        itemTableView.refresh();
-    }
-
-    @FXML
-    public void saveOptionClicked(){
-        //call observableListToArrayList
-        //serialize using java serialization
-        //write to current list file
-        saveFile(itemTableView.getItems(), selectedFile);
-    }
-
-    @FXML
-    public void saveAsOptionClicked(){
-        FileChooser fileChooser = new FileChooser();
-        Stage fileStage = new Stage();
-        fileStage.setTitle("Save As");
-        fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
-
-        //make sure file is saved as .ser to be serializable
-        FileChooser.ExtensionFilter exFilter = new FileChooser.ExtensionFilter("Json files (*.json)", "*.json");
-        fileChooser.getExtensionFilters().add(exFilter);
-
-        File selectedFile = fileChooser.showSaveDialog(fileStage);
-        this.selectedFile = selectedFile;
-        saveFile( itemTableView.getItems() , selectedFile);
-
-    }
-
     private void saveFile(ObservableList<Item> allItems, File selectedFile){
+        //new Gson object
         Gson gson = new Gson().newBuilder().setPrettyPrinting().create();
 
         try {
+            //write in list of allItems into file
             FileWriter writer = new FileWriter(selectedFile);
             gson.toJson(makeListSerializable(allItems), writer);
             writer.close();
+
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     private ArrayList<SerItem> makeListSerializable(ObservableList<Item> allItems){
+        //convert ObservableList to ArrayList
         ArrayList<Item> observList = observableListToArrayList(allItems);
         ArrayList<SerItem> serList = new ArrayList<>();
+
+        //add items of observList to serList
         for(Item item: observList){
            serList.add(makeItemSerializable(item));
         }
+
+        //return serializable list
         return serList;
     }
     private SerItem makeItemSerializable(Item item){
+        //set item's description, due date, and status to serializable types in SerItem
         return new SerItem(item.getDescription(), item.getDueDate().toString(), item.getIsComplete().isSelected());
     }
 
     private ObservableList<Item> makeListDeserializable(List<SerItem> serItemList){
+        //clear whatever is already in the itemObservableList
         itemObservableList.clear();
+
+        //add items from serItemList to itemObservableList
         for(SerItem serItem: serItemList){
             itemObservableList.add(turnSerItemToItem(serItem));
         }
+
+        //return itemObservableList
         return itemObservableList;
     }
 
     private Item turnSerItemToItem(SerItem serItem){
+        //Format the date
         LocalDate serDate = dateFormatter(serItem.getSerDueDate());
+
+        //set Item setter and constructor with serItem, with the correct types
         Item item = new Item(serItem.getSerDescription(), serDate);
-        item.getIsComplete().setSelected(serItem.isSerIsCompleted());
+        item.getIsComplete().setSelected(serItem.getSerIsCompleted());
         return item;
     }
 
     private LocalDate dateFormatter(String date){
+        //create date pattern
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        //return parsed date string
         return LocalDate.parse(date, formatter);
     }
 
-
-    @FXML
-    public void openOptionClicked(ActionEvent actionEvent) {
-        openFile();
-    }
-
     private void openFile(){
+        //create FileChooser
         FileChooser fileChooser = new FileChooser();
+
+        //create stage for fileChooser
         Stage fileStage = new Stage();
         fileStage.setTitle("Open");
+
+        //set default directory to be user's home directory
         fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
 
         //make sure file is saved as .ser to be serializable
         FileChooser.ExtensionFilter exFilter = new FileChooser.ExtensionFilter("Json files (*.json)", "*.json");
         fileChooser.getExtensionFilters().add(exFilter);
 
+        //show the file stage
         File selectedFile = fileChooser.showOpenDialog(fileStage);
+
+        //change instance of selected file to selected file in FileChooser
         this.selectedFile = selectedFile;
+
+        //call loadFromPrevious
         loadFromPrevious(selectedFile);
     }
 

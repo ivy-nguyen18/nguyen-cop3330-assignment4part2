@@ -5,7 +5,6 @@
 package ucf.assignments;
 
 import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
 import javafx.scene.control.CheckBox;
 
 import java.time.LocalDate;
@@ -17,38 +16,40 @@ public class Item implements java.io.Serializable{
     private LocalDate dueDate;
 
     public Item (String description, LocalDate dueDate) {
+        //initialize instances
         this.isComplete = new CheckBox();
         this.description = new SimpleStringProperty(description);
         this.dueDate = dueDate;
     }
 
     public CheckBox getIsComplete() {
+        //return checkbox
         return isComplete;
     }
 
     public void setIsComplete(CheckBox isComplete) {
+        //set checkbox
         this.isComplete = isComplete;
     }
 
 
     public String getDescription() {
+        //return description
         return description.get();
     }
 
-    public SimpleStringProperty descriptionProperty() {
-        return description;
-    }
-
     public void setDescription(String description) {
+        //set description
         this.description.set(description);
-        //this.description = new SimpleStringProperty(description);
     }
 
     public LocalDate getDueDate() {
+        //return due date
         return dueDate;
     }
 
     public void setDueDate(LocalDate dueDate) {
+        //set due date
         this.dueDate = dueDate;
     }
 
