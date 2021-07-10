@@ -10,7 +10,7 @@ import javafx.scene.control.CheckBox;
 
 import java.time.LocalDate;
 
-public class Item {
+public class Item implements java.io.Serializable{
 
     private CheckBox isComplete;
     private SimpleStringProperty description;

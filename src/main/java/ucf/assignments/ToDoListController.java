@@ -8,14 +8,28 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 
+import java.io.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.List;
 
 public class ToDoListController {
 
@@ -30,8 +44,10 @@ public class ToDoListController {
     @FXML private TextField descriptionTextField;
     @FXML private DatePicker dueDatePicker;
 
-    @FXML ComboBox<String> filterComboBox;
+    @FXML private ComboBox<String> filterComboBox;
     @FXML private ObservableList<Item> itemObservableList = FXCollections.observableArrayList();
+
+    private Stage primaryStage;
 
 
     @FXML
@@ -51,15 +67,10 @@ public class ToDoListController {
         deleteItems(selectedItem, allItems);
     }
 
-    @FXML
-    public void saveChangesButtonClicked(ActionEvent actionEvent) {
-        //call saveChanges
-    }
-
 
     @FXML
     public void viewFilterComboBox(){
-        String choice = filterComboBox.getValue().toString();
+        String choice = filterComboBox.getValue();
         FilteredList<Item> displayList;
         switch (choice) {
             case "View Completed Only" -> {
@@ -71,8 +82,7 @@ public class ToDoListController {
                 displayItems(displayList);
             }
             default -> {
-                displayList = viewAll(itemObservableList);
-                displayItems(displayList);
+                itemTableView.setItems(itemObservableList);
             }
         }
     }
@@ -115,25 +125,22 @@ public class ToDoListController {
         //make columns editable
         itemTableView.setEditable(true);
         descriptionColumn.setCellFactory(TextFieldTableCell.forTableColumn());
-        isCompletedColumn.setCellFactory(tc -> new CheckBoxTableCell<>());
+        editDueDateView();
     }
 
     public FilteredList<Item> viewUncompletedOnly(ObservableList<Item> allItems){
         //for unCompleteList use lambda expression to set the predicate that for each Item, call isCompleted and compare to false
-        FilteredList<Item> unCompleteList = new FilteredList<>(allItems, i -> !i.getIsComplete().isSelected());
-        return unCompleteList;
+        return new FilteredList<>(allItems, i -> !i.getIsComplete().isSelected());
     }
 
     public FilteredList<Item> viewCompletedOnly(ObservableList<Item> allItems){
         //for completedList use lambda expression to set the predicate that for each Item, call isCompleted and compare to true
-        FilteredList<Item> completeList = new FilteredList<>(allItems, i -> i.getIsComplete().isSelected());
-        return completeList;
+        return new FilteredList<>(allItems, i -> i.getIsComplete().isSelected());
     }
 
-    public FilteredList<Item> viewAll(ObservableList<Item> allItems){
+    public FilteredList<Item> viewAll(ObservableList<Item> itemObservableList){
         //for entireList use lambda expression to set the predicate that for each Item, call isCompleted and compare to true or false
-        FilteredList<Item> entireList = new FilteredList<>(allItems, i -> i.getIsComplete().isSelected() || !i.getIsComplete().isSelected());
-        return entireList;
+        return new FilteredList<>(itemObservableList, b -> true);
     }
 
     private void displayItems(FilteredList<Item> displayList){
@@ -152,15 +159,9 @@ public class ToDoListController {
         return selectedList;
     }
 
-    public void saveChanges(){
-        //call observableListToArrayList
-        //serialize using java serialization
-        //write to current list file
-    }
-
     private ArrayList<Item> observableListToArrayList(){
-        ArrayList<Item> observableList = new ArrayList<>();
         //copy elements in ObservableList to ArrayList
+        ArrayList<Item> observableList = new ArrayList<Item>(itemTableView.getItems());
         return observableList;
     }
 
@@ -171,13 +172,40 @@ public class ToDoListController {
         return allItemsList;
     }
 
-    private ObservableList<Item> ObservableListItems(){
-        //iterate through observable list
-            //add the attributes of the Item object to list
-        //set the table
-
-        return itemObservableList;
+    public void setPrimaryStage(Stage primaryStage){
+        this.primaryStage = primaryStage;
     }
+
+    @FXML
+    public void editDueDateView(){
+        itemTableView.setOnMouseClicked((MouseEvent event) -> {
+            if (event.getButton().equals(MouseButton.PRIMARY) && event.getClickCount() == 2){
+                try {
+                    FXMLLoader loader = new FXMLLoader();
+                    loader.setLocation(getClass().getResource("DueDateView.fxml"));
+                    AnchorPane dueDateViewParent = loader.load();
+
+                    Stage stage = new Stage();
+                    stage.initModality(Modality.WINDOW_MODAL);
+                    stage.initOwner(primaryStage);
+                    stage.setTitle("Edit Due Date");
+                    Scene dueDateViewScene = new Scene(dueDateViewParent);
+                    stage.setScene(dueDateViewScene);
+
+                    DueDateViewController controller = loader.getController();
+                    controller.setDueDateStage(stage);
+                    Item selectedItem = itemTableView.getSelectionModel().getSelectedItem();
+                    controller.initData(selectedItem);
+
+                   stage.showAndWait();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+    }
+
 
     private void initTable() {
         //initialize columns in table to instance variables using setCellValueFactory
@@ -186,13 +214,6 @@ public class ToDoListController {
         dueDateColumn.setCellValueFactory(new PropertyValueFactory<Item, LocalDate>("dueDate"));
     }
 
-    private void editDueDate(){
-        //make the DueDate column editable
-        //dueDateColumn.setEditable(true);
-        //go into the table, get the new changes
-        //dueDateColumn.setCellFactory(TextFieldTableCell.forTableColumn(new LocalDateStringConverter()));
-        //Item itemSelected = itemTableView.getSelectionModel().getSelectedItem();
-    }
 
     @FXML
     public void editDescription(TableColumn.CellEditEvent edittedCell){
@@ -210,27 +231,89 @@ public class ToDoListController {
         itemSelected.getIsComplete().isSelected();
     }
 
-    private void dateConverter(){
-        //set the String pattern to yyyy-MM-dd
-        //set datePicker to the PromptText to get original format
-        //setConverter for datePicker to new pattern using "nested" Override functions
-            //initialize DateTimeFormatter using DateTimeFormatter.ofPattern function
-            //override the toString method for LocalDate
-                //if there a date is inputted
-                    //return formatted date
-                //else
-                    //return empty string
-            //override the fromString method for Strings
-                //if the string is not empty
-                    //parse the string into new pattern
-                //if the string is empty
-                    //return null
+
+    private void loadFromPrevious(File file){
+//        //read back in file
+//        //deserialize file
+//        ObjectInputStream ois = null;
+//        try{
+//            FileInputStream fis = new FileInputStream(file);
+//            ois = new ObjectInputStream(fis);
+//
+//            List<Item> itemList = (List<Item>)ois.readObject();
+//
+//            //copy list to current ObservableList
+//            itemObservableList = FXCollections.observableArrayList(itemList);
+//
+//        } catch (FileNotFoundException e) {
+//            e.printStackTrace();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        } catch (ClassNotFoundException e) {
+//            e.printStackTrace();
+//        }
     }
 
-    private void loadFromPrevious(){
-        //read this list file
-        //read into a list of type Item
-        //copy list to current ObservableList
+    @FXML
+    public void refreshButtonClicked(ActionEvent actionEvent) {
+        itemTableView.refresh();
     }
 
+    @FXML
+    public void aboutOptionClicked(ActionEvent actionEvent) {
+    }
+
+    @FXML
+    public void saveOptionClicked(){
+        //call observableListToArrayList
+        //serialize using java serialization
+        //write to current list file
+    }
+
+    @FXML
+    public void saveAsOptionClicked(){
+        FileChooser fileChooser = new FileChooser();
+        Stage fileStage = new Stage();
+        fileStage.setTitle("Save As");
+        fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
+
+        //make sure file is saved as .ser to be serializable
+        FileChooser.ExtensionFilter exFilter = new FileChooser.ExtensionFilter("SER files (*.ser)", "*.ser");
+        fileChooser.getExtensionFilters().add(exFilter);
+
+        if(itemObservableList.isEmpty()){
+            fileStage.initOwner(primaryStage);
+            Alert emptyTableAlert = new Alert(Alert.AlertType.ERROR, "EMPTY TABLE", ButtonType.OK);
+            emptyTableAlert.setContentText("Nothing new to save");
+            emptyTableAlert.initModality(Modality.APPLICATION_MODAL);
+            emptyTableAlert.initOwner(primaryStage);
+            emptyTableAlert.showAndWait();
+        }else{
+            File selectedFile = fileChooser.showSaveDialog(fileStage);
+            if(selectedFile != null){
+                saveFile(itemTableView.getItems(), selectedFile);
+            }
+        }
+    }
+
+    private void saveFile(ObservableList<Item> allItems, File selectedFile){
+        FileOutputStream fos = null;
+        ObjectOutputStream oos = null;
+        try{
+            fos = new FileOutputStream(selectedFile);
+            oos = new ObjectOutputStream(fos);
+            oos.writeObject(observableListToArrayList());
+
+            oos.close();
+            fos.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    public void openOptionClicked(ActionEvent actionEvent) {
+    }
 }

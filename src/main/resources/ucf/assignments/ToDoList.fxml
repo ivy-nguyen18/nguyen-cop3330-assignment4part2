@@ -22,14 +22,14 @@
         <menus>
           <Menu mnemonicParsing="false" text="File">
             <items>
-              <MenuItem mnemonicParsing="false" text="Close" />
-                  <MenuItem mnemonicParsing="false" text="Save" />
-                  <MenuItem mnemonicParsing="false" text="Save As" />
+                  <MenuItem mnemonicParsing="false" onAction="#saveOptionClicked" text="Save" />
+                  <MenuItem mnemonicParsing="false" onAction="#saveAsOptionClicked" text="Save As" />
+                  <MenuItem mnemonicParsing="false" onAction="#openOptionClicked" text="Open" />
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="Help">
             <items>
-              <MenuItem mnemonicParsing="false" text="About" />
+              <MenuItem mnemonicParsing="false" onAction="#aboutOptionClicked" text="About" />
             </items>
           </Menu>
         </menus>
@@ -99,6 +99,7 @@
                   </TableView>
                   <Button layoutX="520.0" layoutY="680.0" mnemonicParsing="false" onAction="#clearListClicked" text="Clear List" />
                   <ComboBox fx:id="filterComboBox" layoutX="431.0" layoutY="14.0" onAction="#viewFilterComboBox" prefWidth="150.0" promptText="Filter" />
+                  <Button layoutX="47.0" layoutY="14.0" mnemonicParsing="false" onAction="#refreshButtonClicked" text="Refresh" />
                </children>
             </AnchorPane>
         </items>

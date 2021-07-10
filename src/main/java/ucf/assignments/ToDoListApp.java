@@ -21,16 +21,22 @@ public class ToDoListApp extends Application {
     @Override
     public void start(Stage primaryStage) {
         try {
-
-            Parent root = FXMLLoader.load(getClass().getResource("ToDoList.fxml"));
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(getClass().getResource("ToDoList.fxml"));
+            //Parent root = FXMLLoader.load(getClass().getResource("ToDoList.fxml"));
+            Parent root = loader.load();
 
             Scene scene = new Scene(root);
 
             primaryStage.setScene(scene);
             primaryStage.setTitle("List Manager");
+            ToDoListController controller = loader.getController();
+            controller.setPrimaryStage(primaryStage);
+
             primaryStage.show();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
 }
