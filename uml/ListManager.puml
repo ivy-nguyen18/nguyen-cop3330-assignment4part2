@@ -22,34 +22,61 @@ class ToDoListController{
 
     + addItemButtonClicked(ActionEvent)
     + deleteItemsButtonClicked(ActionEvent)
-    + saveChangesButtonClicked(ActionEvent)
-    + backToListManagerButtonClicked(ActionEvent)
-    + viewCompletedOnlyClicked(ActionEvent)
-    + viewUncompletedOnlyButtonClicked(ActionEvent)
-    + viewAllClicked(ActionEvent)
-    + sortByDueDate()
+    + viewFilterComboBox()
+    + editDescription()
+    + clearListClicked(ActionEvent)
+    + refreshButtonClicked(ActionEvent)
+    + saveOption()
+    + saveAsOptionClicked()
+    + openOptionClicked(ActionEvent)
     + initialize()
-    + initData(ToDoList)
-    + viewUncompletedOnly(FilteredList<Item>): FilteredList<Item>
-    + viewCompletedOnly(FilteredList<Item>): FilteredList<Item>
-    + viewAll(FilteredList<Item>): FilteredList<Item>
+    + viewCompletedOnlyClicked(ObservableList<Item>): FilteredList<Item>
+    + viewUncompletedOnlyButtonClicked(ObservableList<Item>): FilteredList<Item>
     + addItem(CheckBox isComplete, String item, String description, LocalDate dueDate, ToDoList selectedList): ToDoList
     + saveChanges()
-    + deleteItems(ObservableList<Item>, ObservableList<Item>): ObservableList<Item>
+    + deleteItems(Item, ObservableList<Item>): ObservableList<Item>
     + setChangedDueDate(LocalDate)
     + setChangedDescription(String)
     + setChangedStatus(CheckBox)
+    + setPrimaryStage(Stage)
+    + editDueDateView()
+    - clearList(ObservableList<Item>)
+    - displayItems(FilteredList<Item>)
     - observableListToArrayList(): ArrayList<Item>
-    - ObservableListItems()
     - initTable()
-    - initColumns()
     - editColumns()
-    - editDueDate()
-    - editDescription()
-    - editStatus()
-    - dateConverter()
-    - loadFromPrevious()
+    - dateFormatter(String): LocalDate
+    - openFile()
+    - loadFromPrevious(File)
+    - saveFile(ObservableList<Item>, File)
+    - makeListSerializable(ObservableList<Item>): ArrayList<SerItem>
+    - makeItemSerializable(Item): SerItem
+    - makeListDeserializable(List<SerItem>): ObservableList<Item>
+    - turnSerItemToItem(SerItem): Item
+}
 
+class DueDateViewController{
+    - selectedItem: Item
+    - dueDateStage: Stage
+
+    - newDueDatePicker: DatePicker
+    - itemDescriptionLabel: Label
+
+    + saveChangesButtonClicked(ActionEvent)
+    + saveChanges(LocalDate)
+    + setDueDateStage(Stage)
+    + initData(Item)
+}
+
+class SerItem{
+    - serDescription: String
+    - serDueDate: String
+    - serIsCompleted:boolean
+
+    + SerItem(String, String, boolean)
+    + getSerDescription(): String
+    + getSerDueDate(): String
+    + getSerIsCompleted(): boolean
 }
 
 class Item{
@@ -71,10 +98,11 @@ class Item{
     + setDueDate(LocalDate)
 }
 
-javafx.Application <|-- ListManager
-ListManager -- ListManagerController
-ListManagerController -- ToDoListController
-ToDoList -- ToDoListController
-ToDoList -- Item
+javafx.Application <|-- ToDoListApp
+ToDoListApp -- ToDoListController
+ToDoListController -- Item
+DueDateViewController -- Item
+ToDoListController -- SerItem
+ToDoListController -- DueDateViewController
 
 @enduml

@@ -161,7 +161,7 @@ public class ToDoListController {
         openFile();
     }
 
-    public void editColumns() {
+    private void editColumns() {
         //set the table to be editable (true)
         itemTableView.setEditable(true);
 
