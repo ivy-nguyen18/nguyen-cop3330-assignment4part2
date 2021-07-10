@@ -4,6 +4,8 @@
  */
 package ucf.assignments;
 
+import com.google.gson.Gson;
+import com.sun.javafx.collections.ObservableListWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
@@ -27,8 +29,13 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class ToDoListController {
@@ -40,14 +47,15 @@ public class ToDoListController {
     @FXML private TableColumn<Item, LocalDate> dueDateColumn;
 
     //Instance variables to create new Item objects
-    @FXML private CheckBox isComplete;
     @FXML private TextField descriptionTextField;
     @FXML private DatePicker dueDatePicker;
 
     @FXML private ComboBox<String> filterComboBox;
     @FXML private ObservableList<Item> itemObservableList = FXCollections.observableArrayList();
 
+
     private Stage primaryStage;
+    private File selectedFile;
 
 
     @FXML
@@ -110,8 +118,6 @@ public class ToDoListController {
         //set up table
         initTable();
 
-        //load from memory
-
         //load observableListItems to make list viewable
         itemTableView.setItems(itemObservableList);
 
@@ -159,11 +165,11 @@ public class ToDoListController {
         return selectedList;
     }
 
-    private ArrayList<Item> observableListToArrayList(){
+    private ArrayList<Item> observableListToArrayList(ObservableList<Item> observableList){
         //copy elements in ObservableList to ArrayList
-        ArrayList<Item> observableList = new ArrayList<Item>(itemTableView.getItems());
-        return observableList;
+        return new ArrayList<Item>(observableList);
     }
+
 
     public ObservableList<Item> deleteItems(Item selectedItem, ObservableList<Item> allItemsList){
         //remove item from list
@@ -233,25 +239,21 @@ public class ToDoListController {
 
 
     private void loadFromPrevious(File file){
-//        //read back in file
-//        //deserialize file
-//        ObjectInputStream ois = null;
-//        try{
-//            FileInputStream fis = new FileInputStream(file);
-//            ois = new ObjectInputStream(fis);
-//
-//            List<Item> itemList = (List<Item>)ois.readObject();
-//
-//            //copy list to current ObservableList
-//            itemObservableList = FXCollections.observableArrayList(itemList);
-//
-//        } catch (FileNotFoundException e) {
-//            e.printStackTrace();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        } catch (ClassNotFoundException e) {
-//            e.printStackTrace();
-//        }
+
+        try{
+            Gson gson = new Gson();
+
+            Reader reader = Files.newBufferedReader(Paths.get(String.valueOf(file)));
+            List<SerItem> serItems = Arrays.asList(gson.fromJson(reader, SerItem[].class));
+
+            makeListDeserializable(serItems);
+
+            reader.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
     @FXML
@@ -260,14 +262,11 @@ public class ToDoListController {
     }
 
     @FXML
-    public void aboutOptionClicked(ActionEvent actionEvent) {
-    }
-
-    @FXML
     public void saveOptionClicked(){
         //call observableListToArrayList
         //serialize using java serialization
         //write to current list file
+        saveFile(itemTableView.getItems(), selectedFile);
     }
 
     @FXML
@@ -278,42 +277,78 @@ public class ToDoListController {
         fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
 
         //make sure file is saved as .ser to be serializable
-        FileChooser.ExtensionFilter exFilter = new FileChooser.ExtensionFilter("SER files (*.ser)", "*.ser");
+        FileChooser.ExtensionFilter exFilter = new FileChooser.ExtensionFilter("Json files (*.json)", "*.json");
         fileChooser.getExtensionFilters().add(exFilter);
 
-        if(itemObservableList.isEmpty()){
-            fileStage.initOwner(primaryStage);
-            Alert emptyTableAlert = new Alert(Alert.AlertType.ERROR, "EMPTY TABLE", ButtonType.OK);
-            emptyTableAlert.setContentText("Nothing new to save");
-            emptyTableAlert.initModality(Modality.APPLICATION_MODAL);
-            emptyTableAlert.initOwner(primaryStage);
-            emptyTableAlert.showAndWait();
-        }else{
-            File selectedFile = fileChooser.showSaveDialog(fileStage);
-            if(selectedFile != null){
-                saveFile(itemTableView.getItems(), selectedFile);
-            }
-        }
+        File selectedFile = fileChooser.showSaveDialog(fileStage);
+        this.selectedFile = selectedFile;
+        saveFile( itemTableView.getItems() , selectedFile);
+
     }
 
     private void saveFile(ObservableList<Item> allItems, File selectedFile){
-        FileOutputStream fos = null;
-        ObjectOutputStream oos = null;
-        try{
-            fos = new FileOutputStream(selectedFile);
-            oos = new ObjectOutputStream(fos);
-            oos.writeObject(observableListToArrayList());
+        Gson gson = new Gson().newBuilder().setPrettyPrinting().create();
 
-            oos.close();
-            fos.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
+        try {
+            FileWriter writer = new FileWriter(selectedFile);
+            gson.toJson(makeListSerializable(allItems), writer);
+            writer.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
+    private ArrayList<SerItem> makeListSerializable(ObservableList<Item> allItems){
+        ArrayList<Item> observList = observableListToArrayList(allItems);
+        ArrayList<SerItem> serList = new ArrayList<>();
+        for(Item item: observList){
+           serList.add(makeItemSerializable(item));
+        }
+        return serList;
+    }
+    private SerItem makeItemSerializable(Item item){
+        return new SerItem(item.getDescription(), item.getDueDate().toString(), item.getIsComplete().isSelected());
+    }
+
+    private ObservableList<Item> makeListDeserializable(List<SerItem> serItemList){
+        itemObservableList.clear();
+        for(SerItem serItem: serItemList){
+            itemObservableList.add(turnSerItemToItem(serItem));
+        }
+        return itemObservableList;
+    }
+
+    private Item turnSerItemToItem(SerItem serItem){
+        LocalDate serDate = dateFormatter(serItem.getSerDueDate());
+        Item item = new Item(serItem.getSerDescription(), serDate);
+        item.getIsComplete().setSelected(serItem.isSerIsCompleted());
+        return item;
+    }
+
+    private LocalDate dateFormatter(String date){
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        return LocalDate.parse(date, formatter);
+    }
+
+
     @FXML
     public void openOptionClicked(ActionEvent actionEvent) {
+        openFile();
     }
+
+    private void openFile(){
+        FileChooser fileChooser = new FileChooser();
+        Stage fileStage = new Stage();
+        fileStage.setTitle("Open");
+        fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
+
+        //make sure file is saved as .ser to be serializable
+        FileChooser.ExtensionFilter exFilter = new FileChooser.ExtensionFilter("Json files (*.json)", "*.json");
+        fileChooser.getExtensionFilters().add(exFilter);
+
+        File selectedFile = fileChooser.showOpenDialog(fileStage);
+        this.selectedFile = selectedFile;
+        loadFromPrevious(selectedFile);
+    }
+
 }

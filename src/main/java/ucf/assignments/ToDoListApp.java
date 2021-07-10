@@ -29,7 +29,7 @@ public class ToDoListApp extends Application {
             Scene scene = new Scene(root);
 
             primaryStage.setScene(scene);
-            primaryStage.setTitle("List Manager");
+            primaryStage.setTitle("MyToDoList");
             ToDoListController controller = loader.getController();
             controller.setPrimaryStage(primaryStage);
 
