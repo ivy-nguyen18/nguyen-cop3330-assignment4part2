@@ -8,7 +8,7 @@
 
 <AnchorPane prefHeight="214.0" prefWidth="222.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ucf.assignments.DueDateViewController">
    <children>
-      <DatePicker fx:id="newDueDatePicker" layoutX="24.0" layoutY="82.0" promptText="Due Date" />
+      <DatePicker fx:id="newDueDatePicker" editable="false" layoutX="24.0" layoutY="82.0" promptText="Due Date" />
       <Button layoutX="66.0" layoutY="153.0" mnemonicParsing="false" onAction="#saveChangesButtonClicked" text="Save Changes" />
       <Text layoutX="66.0" layoutY="29.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Edit Due Date">
          <font>

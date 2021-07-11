@@ -16,59 +16,59 @@
 <?import javafx.scene.text.Text?>
 
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="758.0" prefWidth="901.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ucf.assignments.ToDoListController">
-   <top>
-      <MenuBar prefHeight="13.0" prefWidth="733.0" BorderPane.alignment="CENTER">
-        <menus>
-          <Menu mnemonicParsing="false" text="File">
-            <items>
-                  <MenuItem mnemonicParsing="false" onAction="#saveOptionClicked" text="Save" />
-                  <MenuItem mnemonicParsing="false" onAction="#saveAsOptionClicked" text="Save As" />
-                  <MenuItem mnemonicParsing="false" onAction="#openOptionClicked" text="Open" />
-            </items>
-          </Menu>
-        </menus>
-      </MenuBar>
-   </top>
-   <center>
-      <SplitPane dividerPositions="0.3047830923248053" prefHeight="160.0" prefWidth="200.0" BorderPane.alignment="CENTER">
-        <items>
-          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="271.0">
-               <children>
-                  <SplitPane layoutX="6.0" layoutY="256.0" orientation="VERTICAL" prefHeight="731.0" prefWidth="271.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+    <top>
+        <MenuBar prefHeight="13.0" prefWidth="733.0" BorderPane.alignment="CENTER">
+            <menus>
+                <Menu mnemonicParsing="false" text="File">
                     <items>
-                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
-                           <children>
-                              <DatePicker fx:id="dueDatePicker" layoutX="40.0" layoutY="141.0" prefHeight="25.0" prefWidth="189.0" promptText="Due Date" />
-                              <Text layoutX="97.0" layoutY="38.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Create Item">
-                                 <font>
-                                    <Font name="System Bold" size="14.0" />
-                                 </font>
-                              </Text>
-                              <Button layoutX="102.0" layoutY="228.0" mnemonicParsing="false" onAction="#addItemButtonClicked" text="Add Item" />
-                              <TextField fx:id="descriptionTextField" layoutX="40.0" layoutY="80.0" prefHeight="25.0" prefWidth="190.0" promptText="Description" />
-                           </children>
-                        </AnchorPane>
+                        <MenuItem mnemonicParsing="false" onAction="#saveOptionClicked" text="Save" />
+                        <MenuItem mnemonicParsing="false" onAction="#saveAsOptionClicked" text="Save As" />
+                        <MenuItem mnemonicParsing="false" onAction="#openOptionClicked" text="Open" />
                     </items>
-                  </SplitPane>
-               </children>
-            </AnchorPane>
-          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="731.0" prefWidth="674.0">
-               <children>
-                  <AnchorPane layoutX="-184.0" layoutY="-223.0" minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0" />
-                  <TableView fx:id="itemTableView" layoutX="47.0" layoutY="46.0" prefHeight="606.0" prefWidth="534.0">
-                     <columns>
-                        <TableColumn fx:id="isCompletedColumn" prefWidth="74.0" text="Status" />
-                        <TableColumn fx:id="descriptionColumn" onEditCommit="#editDescription" prefWidth="367.0" text="Description" />
-                        <TableColumn fx:id="dueDateColumn" prefWidth="92.0" text="Due Date" />
-                     </columns>
-                  </TableView>
-                  <Button layoutX="520.0" layoutY="680.0" mnemonicParsing="false" onAction="#clearListClicked" text="Clear List" />
-                  <ComboBox fx:id="filterComboBox" layoutX="431.0" layoutY="14.0" onAction="#viewFilterComboBox" prefWidth="150.0" promptText="Filter" />
-                  <Button layoutX="47.0" layoutY="14.0" mnemonicParsing="false" onAction="#refreshButtonClicked" text="Refresh" />
-                  <Button layoutX="289.0" layoutY="680.0" mnemonicParsing="false" onAction="#deleteItemsButtonClicked" text="Delete" />
-               </children>
-            </AnchorPane>
-        </items>
-      </SplitPane>
-   </center>
+                </Menu>
+            </menus>
+        </MenuBar>
+    </top>
+    <center>
+        <SplitPane dividerPositions="0.3047830923248053" prefHeight="160.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+            <items>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="271.0">
+                    <children>
+                        <SplitPane layoutX="6.0" layoutY="256.0" orientation="VERTICAL" prefHeight="731.0" prefWidth="271.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                            <items>
+                                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
+                                    <children>
+                                        <DatePicker fx:id="dueDatePicker" editable="false" layoutX="40.0" layoutY="141.0" prefHeight="25.0" prefWidth="189.0" promptText="Due Date" />
+                                        <Text layoutX="97.0" layoutY="38.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Create Item">
+                                            <font>
+                                                <Font name="System Bold" size="14.0" />
+                                            </font>
+                                        </Text>
+                                        <Button layoutX="102.0" layoutY="228.0" mnemonicParsing="false" onAction="#addItemButtonClicked" text="Add Item" />
+                                        <TextField fx:id="descriptionTextField" layoutX="40.0" layoutY="80.0" prefHeight="25.0" prefWidth="190.0" promptText="Description" />
+                                    </children>
+                                </AnchorPane>
+                            </items>
+                        </SplitPane>
+                    </children>
+                </AnchorPane>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="731.0" prefWidth="674.0">
+                    <children>
+                        <AnchorPane layoutX="-184.0" layoutY="-223.0" minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0" />
+                        <TableView fx:id="itemTableView" layoutX="47.0" layoutY="46.0" prefHeight="606.0" prefWidth="534.0">
+                            <columns>
+                                <TableColumn fx:id="isCompletedColumn" prefWidth="74.0" text="Status" />
+                                <TableColumn fx:id="descriptionColumn" onEditCommit="#editDescription" prefWidth="367.0" text="Description" />
+                                <TableColumn fx:id="dueDateColumn" prefWidth="92.0" text="Due Date" />
+                            </columns>
+                        </TableView>
+                        <Button layoutX="520.0" layoutY="680.0" mnemonicParsing="false" onAction="#clearListClicked" text="Clear List" />
+                        <ComboBox fx:id="filterComboBox" layoutX="431.0" layoutY="14.0" onAction="#viewFilterComboBox" prefWidth="150.0" promptText="Filter" />
+                        <Button layoutX="47.0" layoutY="14.0" mnemonicParsing="false" onAction="#refreshButtonClicked" text="Refresh" />
+                        <Button layoutX="289.0" layoutY="680.0" mnemonicParsing="false" onAction="#deleteItemsButtonClicked" text="Delete" />
+                    </children>
+                </AnchorPane>
+            </items>
+        </SplitPane>
+    </center>
 </BorderPane>
