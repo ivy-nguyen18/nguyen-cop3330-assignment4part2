@@ -1,10 +1,14 @@
+/*
+ *  UCF COP3330 Summer 2021 Assignment 4 Solution
+ *  Copyright 2021 Ivy Nguyen
+ */
 package ucf.assignments;
 
 public class SerItem {
 
-    private final String serDescription;
-    private final String serDueDate;
-    private final boolean serIsCompleted;
+    private String serDescription;
+    private String serDueDate;
+    private boolean serIsCompleted;
 
     public SerItem(String serDescription, String serDueDate, boolean serIsCompleted) {
         //instantiate variables
@@ -12,6 +16,22 @@ public class SerItem {
         this.serDueDate = serDueDate;
         this.serIsCompleted = serIsCompleted;
     }
+
+    public void setSerDescription(String serDescription) {
+        //set description
+        this.serDescription = serDescription;
+    }
+
+    public void setSerDueDate(String serDueDate) {
+        //set due date
+        this.serDueDate = serDueDate;
+    }
+
+    public void setSerIsCompleted(boolean serIsCompleted) {
+        //set status
+        this.serIsCompleted = serIsCompleted;
+    }
+
 
     public String getSerDescription() {
         //return serializable description

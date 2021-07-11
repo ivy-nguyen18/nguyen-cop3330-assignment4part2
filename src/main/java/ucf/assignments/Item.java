@@ -9,13 +9,14 @@ import javafx.scene.control.CheckBox;
 
 import java.time.LocalDate;
 
-public class Item implements java.io.Serializable{
+public class Item extends SerItem{
 
     private CheckBox isComplete;
     private SimpleStringProperty description;
     private LocalDate dueDate;
 
     public Item (String description, LocalDate dueDate) {
+        super(description, dueDate.toString(), false);
         //initialize instances
         this.isComplete = new CheckBox();
         this.description = new SimpleStringProperty(description);

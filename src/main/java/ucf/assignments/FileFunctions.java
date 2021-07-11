@@ -1,3 +1,7 @@
+/*
+ *  UCF COP3330 Summer 2021 Assignment 4 Solution
+ *  Copyright 2021 Ivy Nguyen
+ */
 package ucf.assignments;
 
 import com.google.gson.Gson;
@@ -25,40 +29,37 @@ public class FileFunctions {
         this.itemObservableList = itemObservableList;
     }
 
-    public ObservableList<Item> loadFromPrevious(File file){
-
+    public List<SerItem> loadFromPrevious(File file){
+        List<SerItem> serItems = new ArrayList<>();
         try{
             //new Gson object
             Gson gson = new Gson();
 
             //read file into a list of SerItem
             Reader reader = Files.newBufferedReader(Paths.get(String.valueOf(file)));
-            List<SerItem> serItems = Arrays.asList(gson.fromJson(reader, SerItem[].class));
-
-            //call makeListDeserializable to turn serItems to Item list
-            itemObservableList = makeListDeserializable(serItems);
+            serItems = Arrays.asList(gson.fromJson(reader, SerItem[].class));
 
             //close reader
             reader.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return itemObservableList;
+        return serItems;
     }
 
     private ArrayList<Item> observableListToArrayList(ObservableList<Item> observableList){
         //copy elements in ObservableList to ArrayList
-        return new ArrayList<Item>(observableList);
+        return new ArrayList<>(observableList);
     }
 
-    public void saveFile(ObservableList<Item> allItems, File selectedFile){
+    public void saveFile(ArrayList<SerItem> allItems, File selectedFile){
         //new Gson object
         Gson gson = new Gson().newBuilder().setPrettyPrinting().create();
 
         try {
             //write in list of allItems into file
             FileWriter writer = new FileWriter(selectedFile);
-            gson.toJson(makeListSerializable(allItems), writer);
+            gson.toJson(allItems, writer);
             writer.close();
 
         } catch (IOException e) {
@@ -66,7 +67,7 @@ public class FileFunctions {
         }
     }
 
-    private ArrayList<SerItem> makeListSerializable(ObservableList<Item> allItems){
+    public ArrayList<SerItem> makeListSerializable(ObservableList<Item> allItems){
         //convert ObservableList to ArrayList
         ArrayList<Item> observList = observableListToArrayList(allItems);
         ArrayList<SerItem> serList = new ArrayList<>();
@@ -154,8 +155,6 @@ public class FileFunctions {
         //change instance of selected file to selected file in FileChooser
         return fileChooser.showOpenDialog(fileStage);
 
-        //call loadFromPrevious
-        //loadFromPrevious(selectedFile);
     }
 
 }

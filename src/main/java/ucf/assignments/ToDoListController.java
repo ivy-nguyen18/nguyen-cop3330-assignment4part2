@@ -23,6 +23,8 @@ import javafx.stage.Stage;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ToDoListController {
 
@@ -38,6 +40,7 @@ public class ToDoListController {
 
     @FXML private ComboBox<String> filterComboBox;
     @FXML private ObservableList<Item> itemObservableList = FXCollections.observableArrayList();
+    private List<SerItem> serItemList = new ArrayList<>();
 
 
     private Stage primaryStage;
@@ -46,8 +49,14 @@ public class ToDoListController {
 
     @FXML
     public void addItemButtonClicked(ActionEvent actionEvent) {
-        //all addItem with user inputted info
-        addItem(descriptionTextField.getText(), dueDatePicker.getValue(), itemObservableList);
+        //get user inputted info
+        ToDoListFunctions list = new ToDoListFunctions();
+        String description = descriptionTextField.getText();
+        LocalDate dueDate = dueDatePicker.getValue();
+
+        //call add item for serItemList and itemList
+        list.addItem(description, dueDate, itemTableView.getItems());
+        list.addItem(description, dueDate.toString(), false, serItemList);
     }
 
     @FXML
@@ -58,8 +67,10 @@ public class ToDoListController {
         //create ObservableList of type Item for items to remove
         Item selectedItem = itemTableView.getSelectionModel().getSelectedItem();
 
-        //call deleteItems
-        deleteItems(selectedItem, allItems);
+        //call deleteItems for serItemList and itemList
+        ToDoListFunctions list = new ToDoListFunctions();
+        list.deleteItems(selectedItem, allItems);
+        list.deleteItems(selectedItem, serItemList);
     }
 
 
@@ -71,24 +82,28 @@ public class ToDoListController {
         //initialize filtered list
         FilteredList<Item> displayList;
 
+        ToDoListFunctions list = new ToDoListFunctions();
+
         //switch case to for choice
         switch (choice) {
             case "View Completed Only" -> {
                 //call viewCompletedOnly, put resulting list in displayList
-                displayList = viewCompletedOnly(itemObservableList);
+                displayList = list.viewCompletedOnly(itemObservableList);
+
                 //call displayItems to display the items in List
                 displayItems(displayList);
             }
             case "View Uncompleted Only" -> {
                 //call viewUncompletedOnly, put resulting list in displayList
-                displayList = viewUncompletedOnly(itemObservableList);
+                displayList = list.viewUncompletedOnly(itemObservableList);
+
                 //call displayItems to display the items in List
                 displayItems(displayList);
             }
-            default -> {
+            default ->
                 //set itemTableView to itemObservableList to display all items
                 itemTableView.setItems(itemObservableList);
-            }
+
         }
     }
 
@@ -103,7 +118,8 @@ public class ToDoListController {
     @FXML
     public void clearListClicked(ActionEvent actionEvent) {
         //call clearList
-        clearList(itemObservableList);
+        ToDoListFunctions list = new ToDoListFunctions();
+        list.clearList(itemObservableList);
     }
 
     @FXML
@@ -119,7 +135,8 @@ public class ToDoListController {
         file.setItemObservableList(itemObservableList);
 
         //call saveFile
-        file.saveFile(itemTableView.getItems(), selectedFile);
+        ArrayList<SerItem> serList = file.makeListSerializable(itemTableView.getItems());
+        file.saveFile(serList, selectedFile);
     }
 
     @FXML
@@ -130,9 +147,10 @@ public class ToDoListController {
 
         //set new file
         this.selectedFile = file.saveAs();
+        ArrayList<SerItem> serList = file.makeListSerializable(itemTableView.getItems());
 
         //call saveFile
-        file.saveFile(itemTableView.getItems(), selectedFile);
+        file.saveFile(serList, selectedFile);
     }
 
     @FXML
@@ -145,7 +163,8 @@ public class ToDoListController {
         this.selectedFile = file.openFile();
 
         //update itemObservableList
-        itemObservableList = file.loadFromPrevious(selectedFile);
+        List<SerItem> newFile = file.loadFromPrevious(selectedFile);
+        itemObservableList = file.makeListDeserializable(newFile);
     }
 
     public void initialize(){
@@ -169,9 +188,9 @@ public class ToDoListController {
 
     private void initTable() {
         //initialize columns in table to instance variables using setCellValueFactory
-        isCompletedColumn.setCellValueFactory(new PropertyValueFactory<Item, CheckBox>("isComplete"));
-        descriptionColumn.setCellValueFactory(new PropertyValueFactory<Item, String>("description"));
-        dueDateColumn.setCellValueFactory(new PropertyValueFactory<Item, LocalDate>("dueDate"));
+        isCompletedColumn.setCellValueFactory(new PropertyValueFactory<>("isComplete"));
+        descriptionColumn.setCellValueFactory(new PropertyValueFactory<>("description"));
+        dueDateColumn.setCellValueFactory(new PropertyValueFactory<>("dueDate"));
     }
 
     private void editColumns() {
@@ -186,45 +205,9 @@ public class ToDoListController {
     }
 
 
-    private void clearList(ObservableList<Item> list) {
-        //use list's clear function
-        list.clear();
-    }
-
-    public FilteredList<Item> viewUncompletedOnly(ObservableList<Item> allItems){
-        //for unCompleteList use lambda expression to set the predicate that for each Item, call isCompleted and compare to false
-        return new FilteredList<>(allItems, i -> !i.getIsComplete().isSelected());
-    }
-
-    public FilteredList<Item> viewCompletedOnly(ObservableList<Item> allItems){
-        //for completedList use lambda expression to set the predicate that for each Item, call isCompleted and compare to true
-        return new FilteredList<>(allItems, i -> i.getIsComplete().isSelected());
-    }
-
     private void displayItems(FilteredList<Item> displayList){
         //set itemTableView to displayList
         itemTableView.setItems(displayList);
-    }
-
-
-    public ObservableList<Item> addItem(String description, LocalDate dueDate, ObservableList<Item> selectedList){
-        //Create and initialize new item object
-        Item newItem = new Item(description, dueDate);
-
-        //add the new item to the list of items in the table
-        itemTableView.getItems().add(newItem);
-
-        //return selected list
-        return selectedList;
-    }
-
-
-    public ObservableList<Item> deleteItems(Item selectedItem, ObservableList<Item> allItemsList){
-        //remove item from list
-        allItemsList.remove(selectedItem);
-
-        //return allItems list
-        return allItemsList;
     }
 
     public void setPrimaryStage(Stage primaryStage){

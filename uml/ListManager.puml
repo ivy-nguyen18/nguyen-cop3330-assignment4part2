@@ -17,6 +17,7 @@ class ToDoListController{
 
     - itemObservableList: ObservableList<Item>
     - filterComboBox: ComboBox <String>
+    - serItemList: List<SerItem>
 
     - primaryStage: Stage
     - selectedFile: File
@@ -31,19 +32,24 @@ class ToDoListController{
     + saveAsOptionClicked()
     + openOptionClicked()
     + initialize()
-    + viewCompletedOnlyClicked(ObservableList<Item>): FilteredList<Item>
-    + viewUncompletedOnlyButtonClicked(ObservableList<Item>): FilteredList<Item>
-    + addItem(String, LocalDate, ObservableList<Item>): ObservableList<Item>
-    + deleteItems(Item, ObservableList<Item>): ObservableList<Item>
-    + setChangedDueDate(LocalDate)
-    + setChangedDescription(String)
-    + setChangedStatus(CheckBox)
     + setPrimaryStage(Stage)
     + editDueDateView()
-    - clearList(ObservableList<Item>)
     - displayItems(FilteredList<Item>)
     - initTable()
     - editColumns()
+}
+
+class ToDoListFunctions{
+    + viewCompletedOnlyClicked(ObservableList<Item>): FilteredList<Item>
+    + viewUncompletedOnlyButtonClicked(ObservableList<Item>): FilteredList<Item>
+    + addItem(String, LocalDate, ObservableList<Item>): ObservableList<Item>
+    + addItem(String, String, boolean, List<SerItem>): List<SerItem>
+    + deleteItems(Item, ObservableList<Item>): ObservableList<Item>
+    + deleteItems(SerItem, List<SerItem>): List<SerItem>
+    + clearList(ObservableList<Item>)
+    + clearList(List<SerItem>)
+    + viewAll(List<SerItem>): List<SerItem>
+    + filteredView(List<SerItem>): List<SerItem>
 }
 
 class DueDateViewController{
@@ -51,7 +57,6 @@ class DueDateViewController{
     - dueDateStage: Stage
 
     - newDueDatePicker: DatePicker
-    - itemDescriptionLabel: Label
 
     + saveChangesButtonClicked(ActionEvent)
     + saveChanges(LocalDate)
@@ -68,6 +73,9 @@ class SerItem{
     + getSerDescription(): String
     + getSerDueDate(): String
     + getSerIsCompleted(): boolean
+    + setSerDescription(String)
+    + setIsCompleted(boolean)
+    + setDueDate(String)
 }
 
 class Item{
@@ -93,8 +101,8 @@ class FileFunctions{
     - itemObservableList: ObservableList<Item>
 
     + setItemObservableList(ObservableList<Item>)
-    + loadFromPrevious(File): ObservableList<Item>
-    + saveFile(ObservableList<Item>, File)
+    + loadFromPrevious(File): List<SerItem>
+    + saveFile(ArrayList<SerItem> allItems, File)
     + makeListDeserializable(List<SerItem>): ObservableList<Item>
     + saveAs(): File
     + openFile(): File
@@ -105,11 +113,19 @@ class FileFunctions{
     - turnSerItemToItem(SerItem): Item
 }
 
+
 javafx.Application <|-- ToDoListApp
 ToDoListApp -- ToDoListController
 ToDoListController -- Item
 DueDateViewController -- Item
 ToDoListController -- SerItem
 ToDoListController -- DueDateViewController
+SerItem <|-- Item
+ToDoListFunctions -- SerItem
+ToDoListFunctions -- Item
+ToDoListController -- ToDoListFunctions
+FileFunctions - ToDoListController
+FileFunctions - Item
+FileFunctions -- SerItem
 
 @enduml
