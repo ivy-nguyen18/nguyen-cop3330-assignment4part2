@@ -31,4 +31,4 @@
 
 *** NOTE: When selecting a due date, click the calendar icon, otherwise incorrectly inputted user date will not be able to add or update due date ****
 
-*** NOTE: Adding an item will only be possible when "View All" is selected ****
+*** NOTE: Adding and Deleting an item will only be possible when "View All" is selected. "View Completed" and "View Uncompleted" are just views, all operations should be performed in "View All" mode**** 
