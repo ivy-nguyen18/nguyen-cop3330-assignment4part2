@@ -29,6 +29,6 @@
 
 * _To view directions on how to use the application:_ Hopefully, user is capable of doing that (it's a README.md File on github repo)!
 
-*** NOTE: When selecting a due date, click the calendar icon, otherwise incorrectly inputted user date will not be able to add or update due date ****
+*** NOTE: To edit anything, first click on the row, then double click on the cell to be editted***
 
 *** NOTE: Adding and Deleting an item will only be possible when "View All" is selected. "View Completed" and "View Uncompleted" are just views, all operations should be performed in "View All" mode**** 
