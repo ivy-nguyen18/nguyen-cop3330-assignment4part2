@@ -1,7 +1,7 @@
 # nguyen-cop3330-assignment4part2
 ### (Specifically for Rey)
 
-## To use this application (Please read everything before closing):
+## To use this application (Please read everything before progressing):
 
 * _Add an item:_ In the "Create Item" section of the window, enter ALL item details and click "Add Item".
 
