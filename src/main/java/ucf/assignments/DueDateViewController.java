@@ -3,7 +3,6 @@ package ucf.assignments;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.DatePicker;
-import javafx.scene.control.Label;
 import javafx.stage.Stage;
 
 import java.time.LocalDate;
@@ -14,7 +13,6 @@ public class DueDateViewController {
     private Stage dueDateStage;
 
     @FXML private DatePicker newDueDatePicker;
-    @FXML private Label itemDescriptionLabel;
 
 
     @FXML
@@ -39,9 +37,6 @@ public class DueDateViewController {
     public void initData(Item item){
         //initialize the selected item
         selectedItem = item;
-
-        //display item in label
-        itemDescriptionLabel.setText(selectedItem.getDescription());
     }
 
 }
