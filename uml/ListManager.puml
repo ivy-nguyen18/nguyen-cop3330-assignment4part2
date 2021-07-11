@@ -14,6 +14,7 @@ class ToDoListController{
 
     - descriptionTextField: TextField
     - dueDatePicker: DatePicker
+
     - itemObservableList: ObservableList<Item>
     - filterComboBox: ComboBox <String>
 
@@ -26,14 +27,13 @@ class ToDoListController{
     + editDescription()
     + clearListClicked(ActionEvent)
     + refreshButtonClicked(ActionEvent)
-    + saveOption()
+    + saveOptionClicked()
     + saveAsOptionClicked()
-    + openOptionClicked(ActionEvent)
+    + openOptionClicked()
     + initialize()
     + viewCompletedOnlyClicked(ObservableList<Item>): FilteredList<Item>
     + viewUncompletedOnlyButtonClicked(ObservableList<Item>): FilteredList<Item>
-    + addItem(CheckBox isComplete, String item, String description, LocalDate dueDate, ToDoList selectedList): ToDoList
-    + saveChanges()
+    + addItem(String, LocalDate, ObservableList<Item>): ObservableList<Item>
     + deleteItems(Item, ObservableList<Item>): ObservableList<Item>
     + setChangedDueDate(LocalDate)
     + setChangedDescription(String)
@@ -42,17 +42,8 @@ class ToDoListController{
     + editDueDateView()
     - clearList(ObservableList<Item>)
     - displayItems(FilteredList<Item>)
-    - observableListToArrayList(): ArrayList<Item>
     - initTable()
     - editColumns()
-    - dateFormatter(String): LocalDate
-    - openFile()
-    - loadFromPrevious(File)
-    - saveFile(ObservableList<Item>, File)
-    - makeListSerializable(ObservableList<Item>): ArrayList<SerItem>
-    - makeItemSerializable(Item): SerItem
-    - makeListDeserializable(List<SerItem>): ObservableList<Item>
-    - turnSerItemToItem(SerItem): Item
 }
 
 class DueDateViewController{
@@ -96,6 +87,22 @@ class Item{
     + setDescription(String)
     + getDueDate(): LocalDate
     + setDueDate(LocalDate)
+}
+
+class FileFunctions{
+    - itemObservableList: ObservableList<Item>
+
+    + setItemObservableList(ObservableList<Item>)
+    + loadFromPrevious(File): ObservableList<Item>
+    + saveFile(ObservableList<Item>, File)
+    + makeListDeserializable(List<SerItem>): ObservableList<Item>
+    + saveAs(): File
+    + openFile(): File
+    - dateFormatter(String): LocalDate
+    - observableListToArrayList(): ArrayList<Item>
+    - makeListSerializable(ObservableList<Item>): ArrayList<SerItem>
+    - makeItemSerializable(Item): SerItem
+    - turnSerItemToItem(SerItem): Item
 }
 
 javafx.Application <|-- ToDoListApp
