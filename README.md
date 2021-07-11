@@ -1,7 +1,7 @@
-#nguyen-cop3330-assignment4part2
-###(Specifically for Rey)
+# nguyen-cop3330-assignment4part2
+### (Specifically for Rey)
 
-##To use this application (Please read everything before closing):
+## To use this application (Please read everything before closing):
 
 * _Add an item:_ In the "Create Item" section of the window, enter ALL item details and click "Add Item".
 
@@ -29,6 +29,6 @@
 
 * _To view directions on how to use the application:_ Hopefully, user is capable of doing that (it's a README.md File on github repo)!
 
-*** *NOTE:* To edit anything, first click on the row, then double click on the cell to be editted***
+**NOTE:** To edit anything, first click on the row, then double click on the cell to be editted
 
-*** *NOTE:* Adding and Deleting an item will only be possible when "View All" is selected. "View Completed" and "View Uncompleted" are just views, all operations should be performed in "View All" mode****
+**NOTE:** Adding and Deleting an item will only be possible when "View All" is selected. "View Completed" and "View Uncompleted" are just views, all operations should be performed in "View All" mode
