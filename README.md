@@ -5,6 +5,8 @@
 
 * _Add an item:_ In the "Create Item" section of the window, enter ALL item details and click "Add Item".
 
+* _Sort List:_ Click on table headers to sort the list.
+
 * _Remove an item:_ At the bottom, there is a "Delete" button, select the item by clicking once and click the "Delete" button.
 
 * _Clear list of all items:_ At the bottom right hand corner, there is a "Clear List" button, this will clear the list and can be clicked in "View All", "View Completed Only", and "View UnCompleted Only". This clears the ENTIRE list, indepedent of what view is selected.
