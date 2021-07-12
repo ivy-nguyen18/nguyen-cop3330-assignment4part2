@@ -39,6 +39,7 @@ public class ToDoListController {
     @FXML private DatePicker dueDatePicker;
 
     @FXML private ComboBox<String> filterComboBox;
+    @FXML private Label errorLabel;
     @FXML private ObservableList<Item> itemObservableList = FXCollections.observableArrayList();
     private List<SerItem> serItemList = new ArrayList<>();
 
@@ -53,10 +54,17 @@ public class ToDoListController {
         ToDoListFunctions list = new ToDoListFunctions();
         String description = descriptionTextField.getText();
         LocalDate dueDate = dueDatePicker.getValue();
+        if(description.length() >= 1 && description.length() <= 256){
 
-        //call add item for serItemList and itemList
-        list.addItem(description, dueDate, itemTableView.getItems());
-        list.addItem(description, dueDate.toString(), false, serItemList);
+            errorLabel.setText("");
+
+            //call add item for serItemList and itemList
+            list.addItem(description, dueDate, itemTableView.getItems());
+            list.addItem(description, dueDate.toString(), false, serItemList);
+
+        }else{
+            errorLabel.setText("Please enter a description\nbetween 1 and 256 characters");
+        }
     }
 
     @FXML
@@ -168,6 +176,9 @@ public class ToDoListController {
     }
 
     public void initialize(){
+        //set up error label
+        errorLabel.setText("");
+
         //set up table
         initTable();
 
