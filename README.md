@@ -17,15 +17,15 @@
 
 * _To mark item as complete or incomplete:_ In the status column of the table, either click the checkbox to mark as complete, or unclick the checkbox to mark as incomplete.
 
-* _To display all of the existing items on list:_ In the top left of the table is a drop down menu, click "View All" to view all items in list
+* _To display all of the existing items on list:_ In the top right of the table is a drop down menu ("Filter"), click "View All" to view all items in list
 
-* _To display completed only items on list:_ In the top left of the table is a drop down menu, click "View Completed Only" to view all items in list
+* _To display completed only items on list:_ In the top right of the table is a drop down menu ("Filter"), click "View Completed Only" to view all items in list
 
-* _To display uncompleted only items on list:_ In the top left of the table is a drop down menu, click "View Uncompleted Only" to view all items in list
+* _To display uncompleted only items on list:_ In the top right of the table is a drop down menu ("Filter"), click "View Uncompleted Only" to view all items in list
 
 * _To save the list and all of its items to a file on user's device:_ Click on "File" in the menu bar at the very top and select "Save As" to create the file. "Enter file name and destination.
 
-* _To save the list (update list):_ Click on "File" in the menu bar at the very top and select "Save" to save current list.
+* _To save the list (update list in memory):_ Click on "File" in the menu bar at the very top and select "Save" to save current list.
 
 * _To open and load a list:_ Click on "File" in the menu bar at the very top and select "Open". Select a file (of type json) to open and load. File should automatically be loaded onto current MyToDoList window.
 
