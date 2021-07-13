@@ -18,6 +18,9 @@ class ToDoListController{
     - itemObservableList: ObservableList<Item>
     - filterComboBox: ComboBox <String>
     - serItemList: List<SerItem>
+    - errorLabel: Label
+    - errorLabelEdit: Label
+    - errorLabelDueDate: Label
 
     - primaryStage: Stage
     - selectedFile: File

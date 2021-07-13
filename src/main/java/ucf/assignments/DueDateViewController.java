@@ -18,8 +18,11 @@ public class DueDateViewController {
     @FXML
     public void saveChangesButtonClicked(ActionEvent actionEvent) {
         //get the new value and call saveChanges
-        saveChanges(newDueDatePicker.getValue());
-
+        LocalDate newDueDate = newDueDatePicker.getValue();
+        //check if newDueDate is entered
+        if(newDueDate != null){
+            saveChanges(newDueDate);
+        }
         //exit
         dueDateStage.close();
     }

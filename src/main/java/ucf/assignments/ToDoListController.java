@@ -40,6 +40,8 @@ public class ToDoListController {
 
     @FXML private ComboBox<String> filterComboBox;
     @FXML private Label errorLabel;
+    @FXML private Label errorLabelEdit;
+    @FXML private Label errorLabelDueDate;
     @FXML private ObservableList<Item> itemObservableList = FXCollections.observableArrayList();
     private List<SerItem> serItemList = new ArrayList<>();
 
@@ -54,16 +56,22 @@ public class ToDoListController {
         ToDoListFunctions list = new ToDoListFunctions();
         String description = descriptionTextField.getText();
         LocalDate dueDate = dueDatePicker.getValue();
-        if(description.length() >= 1 && description.length() <= 256){
 
+        //check if description length is greater than 1 but less than 256(inclusive)
+        if(description.length() >= 1 && description.length() <= 256 && dueDate != null){
+
+            //hide error labels
             errorLabel.setText("");
+            errorLabelDueDate.setText("");
 
             //call add item for serItemList and itemList
             list.addItem(description, dueDate, itemTableView.getItems());
             list.addItem(description, dueDate.toString(), false, serItemList);
 
         }else{
+            //set error labels
             errorLabel.setText("Please enter a description\nbetween 1 and 256 characters");
+            errorLabelDueDate.setText("Please enter a due date");
         }
     }
 
@@ -120,7 +128,20 @@ public class ToDoListController {
         //go into the table, get the new changes
         Item itemSelected = itemTableView.getSelectionModel().getSelectedItem();
         //set the changes to item's description
-        itemSelected.setDescription(edittedCell.getNewValue().toString());
+        String newDescription = edittedCell.getNewValue().toString();
+        String oldDescription = itemSelected.getDescription();
+        //check is description is between 1 and 256
+        if(newDescription.length() >= 1 && newDescription.length() <= 256){
+            //hide label
+            errorLabelEdit.setText("");
+            //set description
+            itemSelected.setDescription(newDescription);
+        }else{
+            //set description to the old description
+            itemSelected.setDescription(oldDescription);
+            //show error message
+            errorLabelEdit.setText("Please enter a description between 1 and 256 characters");
+        }
     }
 
     @FXML
@@ -178,6 +199,8 @@ public class ToDoListController {
     public void initialize(){
         //set up error label
         errorLabel.setText("");
+        errorLabelEdit.setText("");
+        errorLabelDueDate.setText("");
 
         //set up table
         initTable();

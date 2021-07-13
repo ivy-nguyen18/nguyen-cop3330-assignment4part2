@@ -48,6 +48,7 @@
                                         <Button layoutX="102.0" layoutY="228.0" mnemonicParsing="false" onAction="#addItemButtonClicked" text="Add Item" />
                                         <TextField fx:id="descriptionTextField" layoutX="40.0" layoutY="80.0" prefHeight="25.0" prefWidth="190.0" promptText="Description" />
                               <Label fx:id="errorLabel" layoutX="40.0" layoutY="105.0" text="Label" />
+                              <Label fx:id="errorLabelDueDate" layoutX="40.0" layoutY="188.0" text="Label" />
                                     </children>
                                 </AnchorPane>
                             </items>
@@ -68,6 +69,7 @@
                         <ComboBox fx:id="filterComboBox" layoutX="431.0" layoutY="14.0" onAction="#viewFilterComboBox" prefWidth="150.0" promptText="Filter" />
                         <Button layoutX="47.0" layoutY="14.0" mnemonicParsing="false" onAction="#refreshButtonClicked" text="Refresh" />
                         <Button layoutX="289.0" layoutY="680.0" mnemonicParsing="false" onAction="#deleteItemsButtonClicked" text="Delete" />
+                  <Label fx:id="errorLabelEdit" layoutX="117.0" layoutY="18.0" text="Label" />
                     </children>
                 </AnchorPane>
             </items>
