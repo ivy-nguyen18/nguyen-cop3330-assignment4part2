@@ -3,7 +3,7 @@
 
 ## To use this application (Please read everything before progressing):
 
-* _Add an item:_ In the "Create Item" section of the window, enter ALL item details and click "Add Item".
+* _Add an item:_ In the "Create Item" section of the window, enter ALL item details and click "Add Item". Otherwise, error labels will appear.
 
 * _Sort List:_ Click on table headers to sort the list.
 
