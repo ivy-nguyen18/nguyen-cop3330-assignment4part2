@@ -11,7 +11,7 @@
 
 * _Clear list of all items:_ At the bottom right hand corner, there is a "Clear List" button, this will clear the list and can be clicked in "View All", "View Completed Only", and "View UnCompleted Only". This clears the ENTIRE list, indepedent of what view is selected.
 
-* _Edit description of Item:_ In the table, click on item, double click the item's description cell and press enter to submit the changes.
+* _Edit description of Item:_ In the table, click on item, double click the item's description cell and press Enter to submit the changes. If error label appears at top of table, refresh (by clicking "Refresh") the table and the previous description of the item should appear.
 
 * _Edit due date of Item:_ In the table, double click the item's due date cell, a window will popup, use the calendar to select a due date. Select "Save Changes" then close the window. To see the changes, click the "Refresh" button on the top left of the table.
 
